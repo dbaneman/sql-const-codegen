@@ -88,9 +88,9 @@ And the generated output file looks like this:
     	}
     }
 
-Voila! Now you've constants for your MySQL schema. All table names are qualified by the schema name, and all column names are qualified by both the schema and table names (joined by periods). Note that nested class name conflicts (e.g. schema and table with the same name) are resolved by appending a "1" to the table name.  
+Voila! Now you've got constants for your MySQL schema. All table names are qualified by the schema name, and all column names are qualified by both the schema and table names (joined by periods). Note that nested class name conflicts (e.g. schema and table with the same name) are resolved by appending a "1" to the table name.  
 
 If you want to try it out, just run example.sql on your MySQL instance to generate this sample schema, modify example.conf to match your connection parameters, and run constgen.jar on the modified config file. 
 
 ## Features and future releases
-Currently, this tool always generates Java code from a MySQL schema. In the future, I'd like to add support for additional languages and databases. I also plan to add greater configurability (e.g. other naming options besides "schema.table.column").
+Currently, this tool always generates Java code from a MySQL schema. In the future, I'd like to add support for additional languages and databases. I also plan to add greater configurability (e.g. other naming options besides _\<schema\>.\<table\>.\<column\>_).
