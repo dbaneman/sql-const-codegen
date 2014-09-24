@@ -1,10 +1,10 @@
-sql-const-codegen
+ConstGen
 =================
 
-When building apps that interact with a MySQL database, I sometimes find myself thinking, "Gee, wouldn't it be nice if I could reference all these schema, table and column names using constants?" This project solves that problem. It's a simple Java code generation tool that creates constants from a MySQL schema. 
+When building apps that interact with a MySQL database, I sometimes find myself thinking, "Gee, wouldn't it be nice if I could reference all these schema, table and column names using constants?" ConstGen is a quick and dirty solution to that problem. It's a simple Java code generation tool that creates constants from a MySQL schema. 
 
 ## Configuration
-This utility (ConstGen) uses Typesafe's config library. To run ConstGen, you'll need to first create a configuration file like the one below (also available in the source code under "resources").
+ConstGen uses Typesafe's config library. To run ConstGen, you'll need to first create a configuration file like the one below (also available in the source code under "resources").
 
     const-gen {
       db {
