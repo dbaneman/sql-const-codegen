@@ -2,6 +2,7 @@ package com.dbaneman.constgen;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
@@ -69,11 +70,11 @@ public class ConstGen {
         tablesRS.close();
         for (String tableName : tableNames) {
             staticClass(out, 2, tableName.equals(dbName) ? tableName + "1" : tableName);
-            nameConst(out, 3, tableName);
+            nameConst(out, 3, dbName, tableName);
             ResultSet columnsRS = stm.executeQuery("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" + dbName + "' AND TABLE_NAME = '" + tableName + "'");
             while (columnsRS.next()) {
                 String columnName = columnsRS.getString(1);
-                columnConst(out, 3, columnName);
+                columnConst(out, 3, columnName, dbName, tableName, columnName);
             }
             columnsRS.close();
             closeBrace(out, 2);
@@ -97,12 +98,13 @@ public class ConstGen {
         out.println(tabs(tabs) + "public static class " + formatClassName(name) + " {");
     }
 
-    private static void nameConst(PrintStream out, int tabs, String name) {
-        out.println(tabs(tabs) + "public static final String NAME = \"" + name + "\";");
+    private static void nameConst(PrintStream out, int tabs, String... nestedNames) {
+        out.println(tabs(tabs) + "public static final String NAME = \"" + StringUtils.join(nestedNames, '.') + "\";");
+
     }
 
-    private static void columnConst(PrintStream out, int tabs, String name) {
-        out.println(tabs(tabs) + "public static final String " + name.toUpperCase() + " = \"" + name + "\";");
+    private static void columnConst(PrintStream out, int tabs, String name, String... nestedNames) {
+        out.println(tabs(tabs) + "public static final String " + name.toUpperCase() + " = \"" + StringUtils.join(nestedNames, '.') + "\";");
     }
 
     private static void closeBrace(PrintStream out, int tabs) {
