@@ -94,7 +94,7 @@ public class ConstGen {
     }
 
     private static void staticClass(PrintStream out, int tabs, String name) {
-        out.println(tabs(tabs) + "public static class " + name.toUpperCase() + " {");
+        out.println(tabs(tabs) + "public static class " + formatClassName(name) + " {");
     }
 
     private static void nameConst(PrintStream out, int tabs, String name) {
@@ -113,6 +113,20 @@ public class ConstGen {
         StringBuilder sb = new StringBuilder();
         for (int i=0; i<numTabs; i++) {
             sb.append("\t");
+        }
+        return sb.toString();
+    }
+
+    private static String formatClassName(String name) {
+        StringBuilder sb = new StringBuilder();
+        Character previousChar = null;
+        for (char c : name.toCharArray()) {
+            if (previousChar == null || previousChar.equals('_')) {
+                sb.append(Character.toUpperCase(c));
+            } else if (c != '_') {
+                sb.append(Character.toLowerCase(c));
+            }
+            previousChar = c;
         }
         return sb.toString();
     }
