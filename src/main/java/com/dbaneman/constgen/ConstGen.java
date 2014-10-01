@@ -2,7 +2,6 @@ package com.dbaneman.constgen;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
@@ -69,12 +68,13 @@ public class ConstGen {
         }
         tablesRS.close();
         for (String tableName : tableNames) {
-            staticClass(out, 2, tableName.equals(dbName) ? tableName + "1" : tableName);
-            nameConst(out, 3, dbName, tableName);
+            String tableNameToWrite = tableName.equals(dbName) ? tableName + "1" : tableName;
+            staticClass(out, 2, tableNameToWrite);
+            nameConst(out, 3, dbName, tableNameToWrite);
             ResultSet columnsRS = stm.executeQuery("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" + dbName + "' AND TABLE_NAME = '" + tableName + "'");
             while (columnsRS.next()) {
                 String columnName = columnsRS.getString(1);
-                columnConst(out, 3, columnName, dbName, tableName, columnName);
+                columnConst(out, 3, dbName, tableNameToWrite, columnName);
             }
             columnsRS.close();
             closeBrace(out, 2);
@@ -98,13 +98,16 @@ public class ConstGen {
         out.println(tabs(tabs) + "public static class " + formatClassName(name) + " {");
     }
 
-    private static void nameConst(PrintStream out, int tabs, String... nestedNames) {
-        out.println(tabs(tabs) + "public static final String NAME = \"" + joinAndLowerCase(nestedNames) + "\";");
-
+    private static void nameConst(PrintStream out, int tabs, String db) {
+        nameConst(out, tabs, db, null);
     }
 
-    private static void columnConst(PrintStream out, int tabs, String name, String... nestedNames) {
-        out.println(tabs(tabs) + "public static final String " + name.toUpperCase() + " = \"" + joinAndLowerCase(nestedNames) + "\";");
+    private static void nameConst(PrintStream out, int tabs, String db, String table) {
+        out.println(tabs(tabs) + "public static final String NAME = " + formatNameValue(db, table, null) + ";");
+    }
+
+    private static void columnConst(PrintStream out, int tabs, String db, String table, String column) {
+        out.println(tabs(tabs) + "public static final String " + column.toUpperCase() + " = " + formatNameValue(db, table, column) + ";");
     }
 
     private static void closeBrace(PrintStream out, int tabs) {
@@ -117,14 +120,6 @@ public class ConstGen {
             sb.append("\t");
         }
         return sb.toString();
-    }
-
-    private static String joinAndLowerCase(String[] nestedNames) {
-        List<String> lowerCaseNames = new ArrayList<String>();
-        for (String name : nestedNames) {
-            lowerCaseNames.add(name.toLowerCase());
-        }
-        return StringUtils.join(lowerCaseNames, '.');
     }
 
     private static String formatClassName(String name) {
@@ -140,4 +135,23 @@ public class ConstGen {
         }
         return sb.toString();
     }
+
+    private static String formatNameValue(String db, String table, String column) {
+        String qualifier = "";
+        String name;
+        if (table == null) {
+            name = db;
+        } else {
+            qualifier = formatClassName(db);
+            if (column != null) {
+                qualifier += "." + formatClassName(table);
+                name = column;
+            } else {
+                name = table;
+            }
+            qualifier += ".NAME + \".\" + ";
+        }
+        return qualifier + "\"" + name.toLowerCase() + "\"";
+    }
+
 }
