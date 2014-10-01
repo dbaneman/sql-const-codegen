@@ -6,7 +6,7 @@ CREATE TABLE research_institutes (
 	institute_name VARCHAR(50),
 	location VARCHAR(50)
 );
-CREATE TABLE paleontologists (
+CREATE TABLE PALEontologists (
     id INT PRIMARY KEY,
     last_name VARCHAR(50),
     first_name VARCHAR(50),
@@ -16,9 +16,9 @@ CREATE TABLE paleontologists (
 CREATE TABLE dinosaurs (
     id INT PRIMARY KEY,
     species_name VARCHAR(50),
-    epoch VARCHAR(30),
+    EPOCH VARCHAR(30),
     year_discovered YEAR,
-	discovered_by INT,
+	dIscovered_by INT,
 	primary_prey INT,
     FOREIGN KEY (discovered_by) REFERENCES paleontologists(id) ON DELETE CASCADE,
 	FOREIGN KEY (primary_prey) REFERENCES paleontologists(id) ON DELETE CASCADE

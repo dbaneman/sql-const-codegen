@@ -99,12 +99,12 @@ public class ConstGen {
     }
 
     private static void nameConst(PrintStream out, int tabs, String... nestedNames) {
-        out.println(tabs(tabs) + "public static final String NAME = \"" + StringUtils.join(nestedNames, '.') + "\";");
+        out.println(tabs(tabs) + "public static final String NAME = \"" + joinAndLowerCase(nestedNames) + "\";");
 
     }
 
     private static void columnConst(PrintStream out, int tabs, String name, String... nestedNames) {
-        out.println(tabs(tabs) + "public static final String " + name.toUpperCase() + " = \"" + StringUtils.join(nestedNames, '.') + "\";");
+        out.println(tabs(tabs) + "public static final String " + name.toUpperCase() + " = \"" + joinAndLowerCase(nestedNames) + "\";");
     }
 
     private static void closeBrace(PrintStream out, int tabs) {
@@ -117,6 +117,14 @@ public class ConstGen {
             sb.append("\t");
         }
         return sb.toString();
+    }
+
+    private static String joinAndLowerCase(String[] nestedNames) {
+        List<String> lowerCaseNames = new ArrayList<String>();
+        for (String name : nestedNames) {
+            lowerCaseNames.add(name.toLowerCase());
+        }
+        return StringUtils.join(lowerCaseNames, '.');
     }
 
     private static String formatClassName(String name) {
